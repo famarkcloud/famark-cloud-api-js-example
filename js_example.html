@@ -59,6 +59,28 @@
         #divRecords {
             display: none;
         }
+
+        #divSessionId {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #headerSessionId {
+            color: #0094ff;
+            font-size: 12px;
+            overflow: inherit;
+            text-overflow: inherit;
+        }
+
+        table, th, td {
+            border: 1px solid #cacaca;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+            font-family: sans-serif;
+            padding: 3px 6px;
+        }
     </style>
 </head>
 <body>
@@ -89,7 +111,9 @@
         <hr />
     </div>
     <div id="divRecords">
-        <h4 id="viewSessionId" class="highlight"></h4>
+        <div id="divSessionId">
+            <h4 id="headerSessionId"></h4>
+        </div>
         <h2>Profile - Create Record <em class="highlight">"/System_Profile/CreateRecord"</em></h2>
         <form action="#" id="frmCreateProfile">
             <div>
@@ -106,7 +130,7 @@
         </form>
         <hr />
         <h2>Profile - Retrieve Multiple Records <em class="highlight">"/System_Profile/RetrieveMultipleRecords"</em></h2>
-        <form action="#" id="frmCreateProfile">
+        <form action="#" id="frmRetrieveProfiles">
             <div>
                 <input name="retrieveForm" type="submit" class="btn-submit" value="Retrieve Multiple Records" />
             </div>
@@ -116,12 +140,16 @@
     <script type="text/javascript">
         var _sessionId = null;
         var frmLogin = document.getElementById("frmLogin");
+        frmLogin.addEventListener('submit', frmLoginSubmit);
 
         function frmLoginSubmit(e) {
             e = e || window.event;
             e.preventDefault();
 
-            var spnLogin = frmLogin.querySelector('.spnLogin');
+            var spnMessage = document.body.querySelector('.spnMessage');
+            if (spnMessage)
+                spnMessage.parentNode.removeChild(spnMessage);
+
             var nameInputs = [{ "name": "dn", "label": "domain name" }, { "name": "un", "label": "user name" }];
 
             for (var i = 0; i < nameInputs.length; i++) {
@@ -129,48 +157,36 @@
                 var nameInput = frmLogin.elements[item.name];
                 var frmMessage = validateAlphaNumeric(nameInput, item.label);
 
-                if (frmMessage && spnLogin) {
-                    spnLogin.innerHTML = frmMessage;
-                    return;
-                }
-
-                if (frmMessage && !spnLogin) {
-                    spnLogin = appendMessageSpan(frmMessage);
+                if (frmMessage) {
+                    appendMessageSpan(frmMessage, frmLogin);
                     return;
                 }
             }
-
-            if (spnLogin)
-                frmLogin.removeChild(spnLogin);
 
             var request = {};
             request.DomainName = frmLogin.elements['dn'].value;
             request.UserName = frmLogin.elements['un'].value;
             request.Password = frmLogin.elements['pwd'].value;
 
-
-            apiPostData('/Credential/Connect', request, function (response, errorMessage) {
+            apiPostData('/Credential/Connect', request, null, function (response, errorMessage) {
                 if (errorMessage) {
-                    appendMessageSpan(errorMessage);
-                    return;
+                    appendMessageSpan(errorMessage, frmLogin);
+                    frmLogin.className = 'error';
+                } else {
+                    _sessionId = response;
+                    var headerSessionId = document.getElementById('headerSessionId');
+                    headerSessionId.innerHTML = "SessionId: " + _sessionId;
+                    document.getElementById('divConnect').style.display = 'none';
+                    document.getElementById('divRecords').style.display = 'block';
                 }
-
-                _sessionId = response;
-
-                var viewSessionId = document.getElementById('viewSessionId');
-                viewSessionId.innerHTML = "SessionId: " + _sessionId;
-                document.getElementById('divConnect').style.display = 'none';
-                document.getElementById('divRecords').style.display = 'block';
             });
         }
-
-        frmLogin.addEventListener('submit', frmLoginSubmit);
 
         function validateAlphaNumeric(frmInput, label) {
             if (frmInput.value == '') {
                 frmLogin.className = 'error';
                 frmInput.focus();
-                return 'Enter your ' + label + '!';
+                return 'Enter the ' + label + '!';
             }
             if (frmInput.value.match(/^[a-zA-Z0-9]+$/) == null) {
                 frmLogin.className = 'error';
@@ -183,27 +199,25 @@
             return null;
         }
 
-        function appendMessageSpan(frmMessage) {
-            var spnLogin = document.createElement('span');
-            spnLogin.className = 'spnLogin';
-            frmLogin.insertBefore(spnLogin, frmLogin.firstChild);
-            spnLogin.innerHTML = frmMessage;
-            return spnLogin;
+        function appendMessageSpan(frmMessage, frmAny) {
+            var spnMessage = document.createElement('span');
+            spnMessage.className = 'spnMessage';
+            frmAny.insertBefore(spnMessage, frmAny.firstChild);
+            spnMessage.innerHTML = frmMessage;
+            return spnMessage;
         }
 
-        function apiPostData(urlSuffix, request, callback) {
+        function apiPostData(urlSuffix, request, sessionId, callback) {
             var url = 'https://www.famark.com/Host/api.svc/api' + urlSuffix;
 
             var strRequest = JSON.stringify(request);
 
             var http = new XMLHttpRequest();
-            http.onreadystatechange = function () {
-                if (http.readyState == 4 && http.status == 200) {
-                    var response = JSON.parse(http.responseText);
-                    var errorMessage = http.getResponseHeader("ErrorMessage");
-                    //if response is null then check response header for ErrorMessage
-                    callback(response, errorMessage);
-                }
+            http.onload = function () {
+                var response = JSON.parse(http.responseText);
+                var errorMessage = http.getResponseHeader("ErrorMessage");
+                //if response is null then check response header for ErrorMessage
+                callback(response, errorMessage);
             };
             http.onerror = function () {
                 alert("A network error occurred which could be a CORS issue or a dropped internet connection. Check browser console for more information...");
@@ -212,7 +226,112 @@
             http.open("POST", url, true);
             http.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
             http.setRequestHeader("Accept", "application/json; charset=UTF-8");
+            if (sessionId)
+                http.setRequestHeader("SessionId", sessionId);
             http.send(strRequest);
+        }
+    </script>
+
+    <!--For Create Record-->
+    <script type="text/javascript">
+        var frmCreateProfile = document.getElementById("frmCreateProfile");
+        frmCreateProfile.addEventListener('submit', frmCreateProfileSubmit);
+
+        function frmCreateProfileSubmit(e) {
+            e = e || window.event;
+            e.preventDefault();
+
+            var spnMessage = document.body.querySelector('.spnMessage');
+            if (spnMessage)
+                spnMessage.parentNode.removeChild(spnMessage);
+
+            var dispName = frmCreateProfile.elements['DisplayName'];
+            if (dispName.value == '') {
+                dispName.focus();
+                appendMessageSpan('Enter the display name!', frmCreateProfile);
+                return;
+            }
+
+            var sysName = frmCreateProfile.elements['SystemName'];
+            var frmMessage = validateAlphaNumeric(sysName, 'system name');
+
+            if (frmMessage) {
+                appendMessageSpan(frmMessage, frmCreateProfile);
+                return;
+            }
+
+            var request = {};
+            request.DisplayName = dispName.value;
+            request.SystemName = sysName.value;
+
+            apiPostData('/System_Profile/CreateRecord', request, _sessionId, function (response, errorMessage) {
+                if (errorMessage) {
+                    appendMessageSpan(errorMessage, frmCreateProfile);
+                    frmCreateProfile.className = 'error';
+                } else {
+                    appendMessageSpan('Created RecordId: ' + response, frmCreateProfile);
+                    frmCreateProfile.className = '';
+                }
+            });
+        }
+
+    </script>
+
+    <!--For Retrieve Multiple Records-->
+    <script type="text/javascript">
+
+        var frmRetrieveProfiles = document.getElementById("frmRetrieveProfiles");
+        frmRetrieveProfiles.addEventListener('submit', frmRetrieveProfilesSubmit);
+        function frmRetrieveProfilesSubmit(e) {
+            e = e || window.event;
+            e.preventDefault();
+
+            var spnMessage = document.body.querySelector('.spnMessage');
+            if (spnMessage)
+                spnMessage.parentNode.removeChild(spnMessage);
+
+            var request = {};
+            request.Columns = 'DisplayName, SystemName, System_ProfileId';
+            request.OrderBy = 'DisplayName';
+
+            apiPostData('/System_Profile/RetrieveMultipleRecords', request, _sessionId, function (response, errorMessage) {
+                if (errorMessage) {
+                    appendMessageSpan(errorMessage, frmRetrieveProfiles);
+                    frmRetrieveProfiles.className = 'error';
+                } else {
+                    var tbody = getTableBody();
+                    frmRetrieveProfiles.className = '';
+                    for (var i = 0; i < response.length; i++)
+                        tbody.appendChild(getRow(response[i]));
+                }
+            });
+        }
+
+        function getTableBody() {
+            var tbody = document.getElementById('tbodyProfiles');
+            if (tbody) {
+                while (tbody.childNodes.length > 0)
+                    tbody.removeChild(tbody.lastChild);
+                return tbody;
+            }
+
+            var table = document.createElement('table');
+            frmRetrieveProfiles.parentNode.appendChild(table);
+            var thead = table.appendChild(document.createElement('thead'));
+            var headRow = thead.appendChild(document.createElement('tr'));
+            headRow.appendChild(document.createElement('th')).innerHTML = 'Display Name';
+            headRow.appendChild(document.createElement('th')).innerHTML = 'System Name';
+            tbody = table.appendChild(document.createElement('tbody'));
+            tbody.id = 'tbodyProfiles';
+            return tbody;
+        }
+
+        function getRow(record) {
+            var tr = document.createElement('tr');
+            tr.appendChild(document.createElement('td')).innerHTML = record.DisplayName;
+            tr.appendChild(document.createElement('td')).innerHTML = record.SystemName;
+            tr.id = record.System_ProfileId;
+            return tr;
         }
     </script>
 </body>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Page Info-->
+    <title>Famark Cloud API JavaScript Example</title>
+    <meta name="description" content="This is a sample code showing how to call Famark Cloud API to store and retrieve data through JavaScript." />
+    
+    <style type="text/css">
+        body {
+            font-size: 20px;
+            font-family: serif;
+        }
+        form > div {
+            padding: 2px 4px;
+        }
+        form > div > label {
+            display: inline-block;
+            width: 160px;
+            font-size: 19px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        form > div > input {
+            display: inline-block;
+            width: 160px;
+            font-size: 18px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 1px 5px;
+            line-height: 28px;
+        }
+
+        form > div > input[type='submit'] {
+            width: 339px;
+            font-size: 20px;
+            height: 36px;
+        }
+
+        form.error > div > input {
+            color: #f00;
+            border: 2px inset #ff0000;
+        }
+
+        form.error > span {
+            color: #f00;
+            clear: both;
+            margin: 4px;
+            font-size: 16px;
+            font-family: serif;
+            white-space: nowrap;
+        }
+
+        .highlight {
+            color: #224466;
+        }
+
+        #divRecords {
+            display: none;
+        }
+
+        #divSessionId {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #headerSessionId {
+            color: #0094ff;
+            font-size: 12px;
+            overflow: inherit;
+            text-overflow: inherit;
+        }
+
+        table, th, td {
+            border: 1px solid #cacaca;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+            font-family: sans-serif;
+            padding: 3px 6px;
+        }
+    </style>
+</head>
+<body>
+    <div id="divConnect">
+        <h1>Famark Cloud API JavaScript Example</h1>
+        <h4>This is a sample code showing how to call Famark Cloud API to store and retrieve data through JavaScript.</h4>
+        <h3 class="highlight">NOTE:</h3>
+        <h4 class="highlight">Create a UI => Site in your Famark Cloud Domain and upload this HTML file to that Site (from Properties panel on right selecting attachments). Then browse this file from the Site in Famark Cloud; trying to run this script as a local file or on a different host will cause CORS issue.</h4>
+        <h4 class="highlight">Register for a <a href="https://www.famark.com/install/?ic=FreePlatform">free tier of famark cloud instance</a> if you do not already have one.</h4>
+        <h2>Connect Action <em class="highlight">"/Credential/Connect"</em></h2>
+        <form action="#" id="frmLogin">
+            <div>
+                <label id="dn-label" for="dn">Domain Name</label>
+                <input type="text" name="dn" placeholder="Domain Name" />
+            </div>
+            <div>
+                <label id="un-label" for="un">User Name</label>
+                <input type="text" name="un" placeholder="User Name" />
+            </div>
+            <div>
+                <label id="pwd-label" for="pwd">Password</label>
+                <input type="password" name="pwd" placeholder="Password" />
+            </div>
+            <div>
+                <input name="connectForm" type="submit" class="btn-submit" value="Connect" />
+            </div>
+        </form>
+        <hr />
+    </div>
+    <div id="divRecords">
+        <div id="divSessionId">
+            <h4 id="headerSessionId"></h4>
+        </div>
+        <h2>Profile - Create Record <em class="highlight">"/System_Profile/CreateRecord"</em></h2>
+        <form action="#" id="frmCreateProfile">
+            <div>
+                <label id="dn-label" for="DisplayName">Display Name</label>
+                <input type="text" name="DisplayName" placeholder="Display Name" />
+            </div>
+            <div>
+                <label id="un-label" for="SystemName">System Name</label>
+                <input type="text" name="SystemName" placeholder="System Name" />
+            </div>
+            <div>
+                <input name="createForm" type="submit" class="btn-submit" value="Create Record" />
+            </div>
+        </form>
+        <hr />
+        <h2>Profile - Retrieve Multiple Records <em class="highlight">"/System_Profile/RetrieveMultipleRecords"</em></h2>
+        <form action="#" id="frmRetrieveProfiles">
+            <div>
+                <input name="retrieveForm" type="submit" class="btn-submit" value="Retrieve Multiple Records" />
+            </div>
+        </form>
+        <hr />
+    </div>
+    <script type="text/javascript" src="js_example.js" async="async"></script>
+</body>
+</html>

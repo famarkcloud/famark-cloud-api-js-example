@@ -102,26 +102,41 @@ function frmCreateProfileSubmit(e) {
     if (spnMessage)
         spnMessage.parentNode.removeChild(spnMessage);
 
-    var dispName = frmCreateProfile.elements['DisplayName'];
-    if (dispName.value == '') {
-        dispName.focus();
-        appendMessageSpan('Enter the display name!', frmCreateProfile);
+    var firstName = frmCreateProfile.elements['FirstName'];
+    if (firstName.value == '') {
+        firstName.focus();
+        appendMessageSpan('Enter the First Name!', frmCreateProfile);
         return;
     }
 
-    var sysName = frmCreateProfile.elements['SystemName'];
-    var frmMessage = validateAlphaNumeric(sysName, 'system name');
+    var lastName = frmCreateProfile.elements['LastName'];
+    if (lastName.value == '') {
+        lastName.focus();
+        appendMessageSpan('Enter the Last Name!', frmCreateProfile);
+        return;
+    }
 
-    if (frmMessage) {
-        appendMessageSpan(frmMessage, frmCreateProfile);
+    var phone = frmCreateProfile.elements['Phone'];
+    if (phone.value == '') {
+        phone.focus();
+        appendMessageSpan('Enter the Phone!', frmCreateProfile);
+        return;
+    }
+
+    var email = frmCreateProfile.elements['Email'];
+    if (email.value == '') {
+        email.focus();
+        appendMessageSpan('Enter the Email!', frmCreateProfile);
         return;
     }
 
     var request = {};
-    request.DisplayName = dispName.value;
-    request.SystemName = sysName.value;
+    request.FirstName = firstName.value;
+    request.LastName = lastName.value;
+    request.Phone = phone.value;
+    request.Email = email.value;
 
-    apiPostData('/System_Profile/CreateRecord', request, _sessionId, function (response, errorMessage) {
+    apiPostData('/Business_Contact/CreateRecord', request, _sessionId, function (response, errorMessage) {
         if (errorMessage) {
             appendMessageSpan(errorMessage, frmCreateProfile);
             frmCreateProfile.className = 'error';
@@ -144,10 +159,10 @@ function frmRetrieveProfilesSubmit(e) {
         spnMessage.parentNode.removeChild(spnMessage);
 
     var request = {};
-    request.Columns = 'DisplayName, SystemName, System_ProfileId';
-    request.OrderBy = 'DisplayName';
+    request.Columns = 'FirstName, LastName, Phone, Email, Business_ContactId';
+    request.OrderBy = 'FirstName';
 
-    apiPostData('/System_Profile/RetrieveMultipleRecords', request, _sessionId, function (response, errorMessage) {
+    apiPostData('/Business_Contact/RetrieveMultipleRecords', request, _sessionId, function (response, errorMessage) {
         if (errorMessage) {
             appendMessageSpan(errorMessage, frmRetrieveProfiles);
             frmRetrieveProfiles.className = 'error';
@@ -169,11 +184,16 @@ function getTableBody() {
     }
 
     var table = document.createElement('table');
-    frmRetrieveProfiles.parentNode.appendChild(table);
+    frmRetrieveProfiles.parentNode.insertBefore(table, frmRetrieveProfiles.nextSibling);
     var thead = table.appendChild(document.createElement('thead'));
     var headRow = thead.appendChild(document.createElement('tr'));
-    headRow.appendChild(document.createElement('th')).innerHTML = 'Display Name';
-    headRow.appendChild(document.createElement('th')).innerHTML = 'System Name';
+    headRow.appendChild(document.createElement('th')).innerHTML = 'ContactId';
+    headRow.appendChild(document.createElement('th')).innerHTML = 'FirstName';
+    headRow.appendChild(document.createElement('th')).innerHTML = 'LastName';
+    headRow.appendChild(document.createElement('th')).innerHTML = 'Phone';
+    headRow.appendChild(document.createElement('th')).innerHTML = 'Email';
+    headRow.appendChild(document.createElement('th')).innerHTML = 'Update';
+    headRow.appendChild(document.createElement('th')).innerHTML = 'Delete';
     tbody = table.appendChild(document.createElement('tbody'));
     tbody.id = 'tbodyProfiles';
     return tbody;
@@ -181,8 +201,99 @@ function getTableBody() {
 
 function getRow(record) {
     var tr = document.createElement('tr');
-    tr.appendChild(document.createElement('td')).innerHTML = record.DisplayName;
-    tr.appendChild(document.createElement('td')).innerHTML = record.SystemName;
+    tr.appendChild(document.createElement('td')).innerHTML = record.Business_ContactId;
+    tr.appendChild(document.createElement('td')).innerHTML = record.FirstName;
+    tr.appendChild(document.createElement('td')).innerHTML = record.LastName;
+    tr.appendChild(document.createElement('td')).innerHTML = record.Phone;
+    tr.appendChild(document.createElement('td')).innerHTML = record.Email;
+    tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='update' onclick='update(\"" + record.Business_ContactId + "\");'>" ;
+    tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='delete' onclick='frmDeleteProfileSubmit(\"" + record.Business_ContactId + "\");'>" ;
     tr.id = record.System_ProfileId;
     return tr;
+}
+
+/*--For Update Record--*/
+function update(contactId){
+    var businessContactId = document.getElementById("BussinessContactId");
+    businessContactId.value = contactId;
+}
+
+var frmUpdateProfile = document.getElementById("frmUpdateProfile");
+frmUpdateProfile.addEventListener('submit', frmUpdateProfileSubmit);
+
+function frmUpdateProfileSubmit(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    var spnMessage = document.body.querySelector('.spnMessage');
+    if (spnMessage)
+        spnMessage.parentNode.removeChild(spnMessage);
+    
+    var businessContactId = document.getElementById("BussinessContactId");
+    if (businessContactId.value == '') {
+        businessContactId.focus();
+        appendMessageSpan('Enter the Bussiness Contact Id!', frmUpdateProfile);
+        return;
+    }
+
+    var firstName = frmUpdateProfile.elements['FirstName'];
+    if (firstName.value == '') {
+        firstName.focus();
+        appendMessageSpan('Enter the First name!', frmUpdateProfile);
+        return;
+    }
+
+    var lastName = frmUpdateProfile.elements['LastName'];
+    if (lastName.value == '') {
+        lastName.focus();
+        appendMessageSpan('Enter the Last name!', frmUpdateProfile);
+        return;
+    }
+
+    var phone = frmUpdateProfile.elements['Phone'];
+    if (phone.value == '') {
+        phone.focus();
+        appendMessageSpan('Enter the phone!', frmUpdateProfile);
+        return;
+    }
+
+    var email = frmUpdateProfile.elements['Email'];
+    if (email.value == '') {
+        email.focus();
+        appendMessageSpan('Enter the Email!', frmUpdateProfile);
+        return;
+    }
+
+    var request = {};
+    request.Business_ContactId = businessContactId.value;
+    request.FirstName = firstName.value;
+    request.LastName = lastName.value;
+    request.Phone = phone.value;
+    request.Email = email.value;
+
+    apiPostData('/Business_Contact/UpdateRecord', request, _sessionId, function (response, errorMessage) {
+        if (errorMessage) {
+            appendMessageSpan(errorMessage, frmUpdateProfile);
+            frmUpdateProfile.className = 'error';
+        } else {
+            appendMessageSpan('Created RecordId: ' + response, frmUpdateProfile);
+            frmUpdateProfile.className = '';
+        }
+    });
+}
+
+/*--For Delete Records--*/
+function frmDeleteProfileSubmit(e) {
+    var request = {};
+    request.Business_ContactId = e;
+
+    apiPostData('/Business_Contact/DeleteRecord', request, _sessionId, function (response, errorMessage) {
+        if (errorMessage) {
+            appendMessageSpan(errorMessage, frmDeleteRecord);
+            frmDeleteRecord.className = 'error';
+        } else {
+            appendMessageSpan('Deleted RecordId: ' + response, frmDeleteRecord);
+            frmDeleteRecord.className = '';
+        }
+    });
 }

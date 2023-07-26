@@ -6,24 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--Page Info-->
     <title>Famark Cloud API JavaScript Example</title>
-    <meta name="description" content="This is a sample code showing how to call Famark Cloud API to store and retrieve data through JavaScript." />
-    
+    <meta name="description"
+        content="This is a sample code showing how to call Famark Cloud API to store and retrieve data through JavaScript." />
+
     <style type="text/css">
         body {
             font-size: 20px;
             font-family: serif;
         }
-        form > div {
+
+        form>div {
             padding: 2px 4px;
         }
-        form > div > label {
+
+        form>div>label {
             display: inline-block;
             width: 160px;
             font-size: 19px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        form > div > input {
+        form>div>input {
             display: inline-block;
             width: 160px;
             font-size: 18px;
@@ -32,18 +35,18 @@
             line-height: 28px;
         }
 
-        form > div > input[type='submit'] {
+        form>div>input[type='submit'] {
             width: 339px;
             font-size: 20px;
             height: 36px;
         }
 
-        form.error > div > input {
+        form.error>div>input {
             color: #f00;
             border: 2px inset #ff0000;
         }
 
-        form.error > span {
+        form.error>span {
             color: #f00;
             clear: both;
             margin: 4px;
@@ -73,7 +76,9 @@
             text-overflow: inherit;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #cacaca;
             border-collapse: collapse;
             text-align: left;
@@ -86,10 +91,14 @@
 <body>
     <div id="divConnect">
         <h1>Famark Cloud API JavaScript Example</h1>
-        <h4>This is a sample code showing how to call Famark Cloud API to store and retrieve data through JavaScript.</h4>
+        <h4>This is a sample code showing how to call Famark Cloud API to store and retrieve data through JavaScript.
+        </h4>
         <h3 class="highlight">NOTE:</h3>
-        <h4 class="highlight">Create a UI => Site in your Famark Cloud Domain and upload this HTML file to that Site (from Properties panel on right selecting attachments). Then browse this file from the Site in Famark Cloud; trying to run this script as a local file or on a different host will cause CORS issue.</h4>
-        <h4 class="highlight">Register for a <a href="https://www.famark.com/install/?ic=FreePlatform">free tier of famark cloud instance</a> if you do not already have one.</h4>
+        <h4 class="highlight">Create a <em>UI > Site</em> in your Famark Cloud Domain and upload this HTML file to that Site
+            <i>(from Properties panel on right selecting attachments)</i>. Then browse this file from the Site in Famark Cloud;
+            <b>trying to run this script as a local file or on a different host will cause CORS issue</b>.</h4>
+        <h4 class="highlight">Register for a <a href="https://www.famark.com/install/?ic=FreeDev">free tier of
+                famark cloud instance</a> if you do not already have one.</h4>
         <h2>Connect Action <em class="highlight">"/Credential/Connect"</em></h2>
         <form action="#" id="frmLogin">
             <div>
@@ -117,7 +126,7 @@
         <h2>Profile - Create Record <em class="highlight">"/System_Profile/CreateRecord"</em></h2>
         <form action="#" id="frmCreateProfile">
             <div>
-                <label for="FirstName">First Name</label> 
+                <label for="FirstName">First Name</label>
                 <input type="text" name="FirstName" placeholder="First Name" />
             </div>
             <div>
@@ -137,22 +146,22 @@
             </div>
         </form>
         <hr />
-        <h2>Profile - Retrieve Multiple Records <em class="highlight">"/System_Profile/RetrieveMultipleRecords"</em></h2>
+        <h2>Profile - Retrieve Multiple Records <em class="highlight">"/System_Profile/RetrieveMultipleRecords"</em>
+        </h2>
         <form action="#" id="frmRetrieveProfiles">
             <div>
                 <input name="retrieveForm" type="submit" class="btn-submit" value="Retrieve Multiple Records" />
             </div>
         </form>
         <hr />
-        <h2>Profile - Update Record <em class="highlight">"/System_Profile/UpdateRecord"</em></h2>
-        <form action="#" id="frmUpdateProfile">
-
+        <h2 id="headUpdateProfile" style="display: none;">Profile - Update Record <em class="highlight">"/System_Profile/UpdateRecord"</em></h2>
+        <form action="#" style="display: none;" tabindex="0" id="frmUpdateProfile">
             <div>
-                <label  for="BussinessContactId">BussinessContactId</label> 
-                <input  id="BussinessContactId" type="text" name="BussinessContactId" placeholder="BussinessContactId" />
+                <label for="BussinessContactId">ContactId</label>
+                <input id="BussinessContactId" type="text" disabled="disabled" name="BussinessContactId" placeholder="BussinessContactId" />
             </div>
             <div>
-                <label for="FirstName">First Name</label> 
+                <label for="FirstName">First Name</label>
                 <input id="FirstName" type="text" name="FirstName" placeholder="First Name" />
             </div>
             <div>

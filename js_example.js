@@ -206,20 +206,38 @@ function getRow(record) {
     tr.appendChild(document.createElement('td')).innerHTML = record.LastName;
     tr.appendChild(document.createElement('td')).innerHTML = record.Phone;
     tr.appendChild(document.createElement('td')).innerHTML = record.Email;
-    tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='update' onclick='update(\"" + record.Business_ContactId + "\");'>" ;
+    tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='update' onclick='frmUpdateFormLoad(\"" + record.Business_ContactId + "\");'>" ;
     tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='delete' onclick='frmDeleteProfileSubmit(\"" + record.Business_ContactId + "\");'>" ;
     tr.id = record.System_ProfileId;
     return tr;
 }
 
-/*--For Update Record--*/
-function update(contactId){
-    var businessContactId = document.getElementById("BussinessContactId");
-    businessContactId.value = contactId;
-}
-
 var frmUpdateProfile = document.getElementById("frmUpdateProfile");
 frmUpdateProfile.addEventListener('submit', frmUpdateProfileSubmit);
+
+/*--For Update Record--*/
+function frmUpdateFormLoad(contactId){
+    var businessContactId = document.getElementById("BussinessContactId");
+    businessContactId.value = contactId;
+
+    var request = {};
+    request.Columns = 'FirstName, LastName, Phone, Email, Business_ContactId';
+    request.Business_ContactId = contactId;
+    
+    apiPostData('/Business_Contact/RetrieveRecord', request, _sessionId, function (response, errorMessage) {
+        if (errorMessage) {
+            appendMessageSpan(errorMessage, frmUpdateProfile);
+            frmUpdateProfile.className = 'error';
+        } else {
+            frmUpdateProfile.className = '';
+            document.getElementById("FirstName").value = response.FirstName;
+            document.getElementById("LastName").value = response.LastName;
+            document.getElementById("Phone").value = response.Phone;
+            document.getElementById("Email").value = response.Email;
+        }
+    });
+}
+
 
 function frmUpdateProfileSubmit(e) {
     e = e || window.event;
@@ -271,12 +289,14 @@ function frmUpdateProfileSubmit(e) {
     request.Phone = phone.value;
     request.Email = email.value;
 
+    console.log("request",request)
+
     apiPostData('/Business_Contact/UpdateRecord', request, _sessionId, function (response, errorMessage) {
         if (errorMessage) {
             appendMessageSpan(errorMessage, frmUpdateProfile);
             frmUpdateProfile.className = 'error';
         } else {
-            appendMessageSpan('Created RecordId: ' + response, frmUpdateProfile);
+            appendMessageSpan(' Record Updated ', frmUpdateProfile);
             frmUpdateProfile.className = '';
         }
     });

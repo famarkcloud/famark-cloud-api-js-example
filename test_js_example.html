@@ -117,12 +117,20 @@
         <h2>Profile - Create Record <em class="highlight">"/System_Profile/CreateRecord"</em></h2>
         <form action="#" id="frmCreateProfile">
             <div>
-                <label id="dn-label" for="DisplayName">Display Name</label>
-                <input type="text" name="DisplayName" placeholder="Display Name" />
+                <label for="FirstName">First Name</label> 
+                <input type="text" name="FirstName" placeholder="First Name" />
             </div>
             <div>
-                <label id="un-label" for="SystemName">System Name</label>
-                <input type="text" name="SystemName" placeholder="System Name" />
+                <label for="LastName">Last Name</label>
+                <input type="text" name="LastName" placeholder="last Name" />
+            </div>
+            <div>
+                <label for="Phone">Phone</label>
+                <input type="text" name="Phone" placeholder="phone" />
+            </div>
+            <div>
+                <label for="Email">Email</label>
+                <input type="text" name="Email" placeholder="email" />
             </div>
             <div>
                 <input name="createForm" type="submit" class="btn-submit" value="Create Record" />
@@ -133,6 +141,34 @@
         <form action="#" id="frmRetrieveProfiles">
             <div>
                 <input name="retrieveForm" type="submit" class="btn-submit" value="Retrieve Multiple Records" />
+            </div>
+        </form>
+        <hr />
+        <h2>Profile - Update Record <em class="highlight">"/System_Profile/UpdateRecord"</em></h2>
+        <form action="#" id="frmUpdateProfile">
+
+            <div>
+                <label  for="BussinessContactId">BussinessContactId</label> 
+                <input  id="BussinessContactId" type="text" name="BussinessContactId" placeholder="BussinessContactId" />
+            </div>
+            <div>
+                <label for="FirstName">First Name</label> 
+                <input id="FirstName" type="text" name="FirstName" placeholder="First Name" />
+            </div>
+            <div>
+                <label for="LastName">Last Name</label>
+                <input id="LastName" type="text" name="LastName" placeholder="last Name" />
+            </div>
+            <div>
+                <label for="Phone">Phone</label>
+                <input id="Phone" type="text" name="Phone" placeholder="phone" />
+            </div>
+            <div>
+                <label for="Email">Email</label>
+                <input id="Email" type="text" name="Email" placeholder="email" />
+            </div>
+            <div>
+                <input name="updateForm" type="submit" class="btn-submit" value="Update Record" />
             </div>
         </form>
         <hr />

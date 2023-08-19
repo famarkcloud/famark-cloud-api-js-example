@@ -91,10 +91,10 @@ function apiPostData(urlSuffix, request, sessionId, callback) {
     http.send(strRequest);
 }
 /*--For Create Record--*/
-var frmCreateProfile = document.getElementById("frmCreateProfile");
-frmCreateProfile.addEventListener('submit', frmCreateProfileSubmit);
+var frmCreateContact = document.getElementById("frmCreateContact");
+frmCreateContact.addEventListener('submit', frmCreateContactSubmit);
 
-function frmCreateProfileSubmit(e) {
+function frmCreateContactSubmit(e) {
     e = e || window.event;
     e.preventDefault();
 
@@ -102,31 +102,31 @@ function frmCreateProfileSubmit(e) {
     if (spnMessage)
         spnMessage.parentNode.removeChild(spnMessage);
 
-    var firstName = frmCreateProfile.elements['FirstName'];
+    var firstName = frmCreateContact.elements['FirstName'];
     if (firstName.value == '') {
         firstName.focus();
-        appendMessageSpan('Enter the First Name!', frmCreateProfile);
+        appendMessageSpan('Enter the First Name!', frmCreateContact);
         return;
     }
 
-    var lastName = frmCreateProfile.elements['LastName'];
+    var lastName = frmCreateContact.elements['LastName'];
     if (lastName.value == '') {
         lastName.focus();
-        appendMessageSpan('Enter the Last Name!', frmCreateProfile);
+        appendMessageSpan('Enter the Last Name!', frmCreateContact);
         return;
     }
 
-    var phone = frmCreateProfile.elements['Phone'];
+    var phone = frmCreateContact.elements['Phone'];
     if (phone.value == '') {
         phone.focus();
-        appendMessageSpan('Enter the Phone!', frmCreateProfile);
+        appendMessageSpan('Enter the Phone!', frmCreateContact);
         return;
     }
 
-    var email = frmCreateProfile.elements['Email'];
+    var email = frmCreateContact.elements['Email'];
     if (email.value == '') {
         email.focus();
-        appendMessageSpan('Enter the Email!', frmCreateProfile);
+        appendMessageSpan('Enter the Email!', frmCreateContact);
         return;
     }
 
@@ -138,19 +138,19 @@ function frmCreateProfileSubmit(e) {
 
     apiPostData('/Business_Contact/CreateRecord', request, _sessionId, function (response, errorMessage) {
         if (errorMessage) {
-            appendMessageSpan(errorMessage, frmCreateProfile);
-            frmCreateProfile.className = 'error';
+            appendMessageSpan(errorMessage, frmCreateContact);
+            frmCreateContact.className = 'error';
         } else {
-            appendMessageSpan('Created RecordId: ' + response, frmCreateProfile);
-            frmCreateProfile.className = '';
+            appendMessageSpan('Created RecordId: ' + response, frmCreateContact);
+            frmCreateContact.className = '';
         }
     });
 }
 
 /*--For Retrieve Multiple Records--*/
-var frmRetrieveProfiles = document.getElementById("frmRetrieveProfiles");
-frmRetrieveProfiles.addEventListener('submit', frmRetrieveProfilesSubmit);
-function frmRetrieveProfilesSubmit(e) {
+var frmRetrieveContacts = document.getElementById("frmRetrieveContacts");
+frmRetrieveContacts.addEventListener('submit', frmRetrieveContactsSubmit);
+function frmRetrieveContactsSubmit(e) {
     e = e || window.event;
     e.preventDefault();
 
@@ -164,11 +164,11 @@ function frmRetrieveProfilesSubmit(e) {
 
     apiPostData('/Business_Contact/RetrieveMultipleRecords', request, _sessionId, function (response, errorMessage) {
         if (errorMessage) {
-            appendMessageSpan(errorMessage, frmRetrieveProfiles);
-            frmRetrieveProfiles.className = 'error';
+            appendMessageSpan(errorMessage, frmRetrieveContacts);
+            frmRetrieveContacts.className = 'error';
         } else {
             var tbody = getTableBody();
-            frmRetrieveProfiles.className = '';
+            frmRetrieveContacts.className = '';
             for (var i = 0; i < response.length; i++)
                 tbody.appendChild(getRow(response[i]));
         }
@@ -176,7 +176,7 @@ function frmRetrieveProfilesSubmit(e) {
 }
 
 function getTableBody() {
-    var tbody = document.getElementById('tbodyProfiles');
+    var tbody = document.getElementById('tbodyContacts');
     if (tbody) {
         while (tbody.childNodes.length > 0)
             tbody.removeChild(tbody.lastChild);
@@ -184,7 +184,7 @@ function getTableBody() {
     }
 
     var table = document.createElement('table');
-    frmRetrieveProfiles.parentNode.insertBefore(table, frmRetrieveProfiles.nextSibling);
+    frmRetrieveContacts.parentNode.insertBefore(table, frmRetrieveContacts.nextSibling);
     var thead = table.appendChild(document.createElement('thead'));
     var headRow = thead.appendChild(document.createElement('tr'));
     headRow.appendChild(document.createElement('th')).innerHTML = 'ContactId';
@@ -195,7 +195,7 @@ function getTableBody() {
     headRow.appendChild(document.createElement('th')).innerHTML = 'Update';
     headRow.appendChild(document.createElement('th')).innerHTML = 'Delete';
     tbody = table.appendChild(document.createElement('tbody'));
-    tbody.id = 'tbodyProfiles';
+    tbody.id = 'tbodyContacts';
     return tbody;
 }
 
@@ -207,20 +207,20 @@ function getRow(record) {
     tr.appendChild(document.createElement('td')).innerHTML = record.Phone;
     tr.appendChild(document.createElement('td')).innerHTML = record.Email;
     tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='update' onclick='frmUpdateFormLoad(\"" + record.Business_ContactId + "\");'>";
-    tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='delete' onclick='frmDeleteProfileSubmit(\"" + record.Business_ContactId + "\", this);'>";
-    tr.id = record.System_ProfileId;
+    tr.appendChild(document.createElement('td')).innerHTML = "<input type='button' value='delete' onclick='frmDeleteContactSubmit(\"" + record.Business_ContactId + "\", this);'>";
+    tr.id = record.Business_ContactId;
     return tr;
 }
 
-var frmUpdateProfile = document.getElementById("frmUpdateProfile");
-frmUpdateProfile.addEventListener('submit', frmUpdateProfileSubmit);
+var frmUpdateContact = document.getElementById("frmUpdateContact");
+frmUpdateContact.addEventListener('submit', frmUpdateContactSubmit);
 
 /*--For Update Record--*/
 function frmUpdateFormLoad(contactId) {
     document.getElementById("BussinessContactId").value = contactId;
-    document.getElementById("headUpdateProfile").style.display = 'block';
-    frmUpdateProfile.style.display = 'block';
-    frmUpdateProfile.focus();
+    document.getElementById("headUpdateContact").style.display = 'block';
+    frmUpdateContact.style.display = 'block';
+    frmUpdateContact.focus();
 
     var request = {};
     request.Columns = 'FirstName, LastName, Phone, Email, Business_ContactId';
@@ -228,10 +228,10 @@ function frmUpdateFormLoad(contactId) {
 
     apiPostData('/Business_Contact/RetrieveRecord', request, _sessionId, function (response, errorMessage) {
         if (errorMessage) {
-            appendMessageSpan(errorMessage, frmUpdateProfile);
-            frmUpdateProfile.className = 'error';
+            appendMessageSpan(errorMessage, frmUpdateContact);
+            frmUpdateContact.className = 'error';
         } else {
-            frmUpdateProfile.className = '';
+            frmUpdateContact.className = '';
             document.getElementById("FirstName").value = response.FirstName;
             document.getElementById("LastName").value = response.LastName;
             document.getElementById("Phone").value = response.Phone;
@@ -241,7 +241,7 @@ function frmUpdateFormLoad(contactId) {
 }
 
 
-function frmUpdateProfileSubmit(e) {
+function frmUpdateContactSubmit(e) {
     e = e || window.event;
     e.preventDefault();
 
@@ -252,35 +252,35 @@ function frmUpdateProfileSubmit(e) {
     var businessContactId = document.getElementById("BussinessContactId");
     if (businessContactId.value == '') {
         businessContactId.focus();
-        appendMessageSpan('Enter the Bussiness Contact Id!', frmUpdateProfile);
+        appendMessageSpan('Enter the Bussiness Contact Id!', frmUpdateContact);
         return;
     }
 
-    var firstName = frmUpdateProfile.elements['FirstName'];
+    var firstName = frmUpdateContact.elements['FirstName'];
     if (firstName.value == '') {
         firstName.focus();
-        appendMessageSpan('Enter the First name!', frmUpdateProfile);
+        appendMessageSpan('Enter the First name!', frmUpdateContact);
         return;
     }
 
-    var lastName = frmUpdateProfile.elements['LastName'];
+    var lastName = frmUpdateContact.elements['LastName'];
     if (lastName.value == '') {
         lastName.focus();
-        appendMessageSpan('Enter the Last name!', frmUpdateProfile);
+        appendMessageSpan('Enter the Last name!', frmUpdateContact);
         return;
     }
 
-    var phone = frmUpdateProfile.elements['Phone'];
+    var phone = frmUpdateContact.elements['Phone'];
     if (phone.value == '') {
         phone.focus();
-        appendMessageSpan('Enter the phone!', frmUpdateProfile);
+        appendMessageSpan('Enter the phone!', frmUpdateContact);
         return;
     }
 
-    var email = frmUpdateProfile.elements['Email'];
+    var email = frmUpdateContact.elements['Email'];
     if (email.value == '') {
         email.focus();
-        appendMessageSpan('Enter the Email!', frmUpdateProfile);
+        appendMessageSpan('Enter the Email!', frmUpdateContact);
         return;
     }
 
@@ -295,17 +295,17 @@ function frmUpdateProfileSubmit(e) {
 
     apiPostData('/Business_Contact/UpdateRecord', request, _sessionId, function (response, errorMessage) {
         if (errorMessage) {
-            appendMessageSpan(errorMessage, frmUpdateProfile);
-            frmUpdateProfile.className = 'error';
+            appendMessageSpan(errorMessage, frmUpdateContact);
+            frmUpdateContact.className = 'error';
         } else {
-            appendMessageSpan(' Record Updated ', frmUpdateProfile);
-            frmUpdateProfile.className = '';
+            appendMessageSpan(' Record Updated ', frmUpdateContact);
+            frmUpdateContact.className = '';
         }
     });
 }
 
 /*--For Delete Records--*/
-function frmDeleteProfileSubmit(contactId, btn) {
+function frmDeleteContactSubmit(contactId, btn) {
     var request = {};
     request.Business_ContactId = contactId;
     apiPostData('/Business_Contact/DeleteRecord', request, _sessionId, function (response, errorMessage) {
